@@ -30,7 +30,7 @@ npm install -g @stoplight/prism-cli
 yarn global add @stoplight/prism-cli
 ```
 
-🛠️ 주의 NodeJS 18.6 버전 이상이 필요합니다. [관련 이슈](https://github.com/stoplightio/prism/issues/2305)
+🛠️ 주의 NodeJS 18.16 버전 이상이 필요합니다. [관련 이슈](https://github.com/stoplightio/prism/issues/2305)
 
 2. Mocking
 
