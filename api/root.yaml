@@ -13,9 +13,9 @@ paths:
   /api/v1/auth/mail/login:
     $ref: "./paths/v1/auth/login.yaml"
   /api/v1/posts:
-    $ref: "./paths/v1/post/create.yaml"
+    $ref: "./paths/v1/post/posts.yaml"
   /api/v1/posts/{id}:
-    $ref: "./paths/v1/post/read.yaml"
+    $ref: "./paths/v1/post/post.yaml"
   /api/v1/studies:
-    $ref: "./paths/v1/study/create.yaml"
+    $ref: "./paths/v1/study/studies.yaml"
 
