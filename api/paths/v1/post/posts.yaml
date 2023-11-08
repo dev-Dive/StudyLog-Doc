@@ -1,6 +1,7 @@
 post:
   summary: 글 작성
   description: 스터디 글 작성
+  tags: [ Post ]
   parameters:
     - in: header
       name: Authorization
@@ -44,6 +45,7 @@ post:
 get:
   summary: 최신 글 목록 불러오기
   description: 최신 글 목록 불러오기, 무한 스크롤
+  tags: [ Post ]
   parameters:
     - in: query
       name: cursor

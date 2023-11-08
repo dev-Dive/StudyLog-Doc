@@ -20,7 +20,7 @@ get:
               studiesCount:
                 type: number
                 description: 스터디 개수
-                example: 1
+                example: 1디
               studies:
                 type: array
                 description: 스터디 목록
@@ -42,6 +42,7 @@ get:
 post:
   summary: 스터디 생성
   description: 스터디 생성
+  tags: [ Study ]
   requestBody:
     content:
       application/json:

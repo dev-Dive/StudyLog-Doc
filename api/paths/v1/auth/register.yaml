@@ -1,6 +1,7 @@
 post:
   summary: 이메일로 회원가입
   description: 전송받은 이메일 링크로 회원가입 요청
+  tags: [ Auth ]
   requestBody:
     content:
       application/json:

@@ -1,6 +1,7 @@
 post:
   summary: 인증 메일 전송
   description: 회원가입 혹은 로그인 인증 메일 이메일로 전송
+  tags: [ Auth ]
   requestBody:
     content:
       application/json:
