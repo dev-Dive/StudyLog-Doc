@@ -1,0 +1,64 @@
+get:
+  description: 스터디의 포스트 목록 조회
+  summary: 스터디의 포스트 목록 조회
+  tags: [ Study ]
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              posts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: 포스트 식별자
+                    title:
+                      type: string
+                      description: 포스트 제목
+                      example: 개쩌는 포스트
+                    subtitle:
+                      type: string
+                      description: 포스트 부제목
+                      example: 쯘다쯔러
+                    date:
+                      type: string
+                      format: date
+                      description: 포스트 작성일
+                    authors:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                            description: 작성자 식별자
+                          name:
+                            type: string
+                            description: 작성자 이름
+                            example: 고대은
+                          profileImageUrl:
+                            type: string
+                            format: uri
+                            description: 작성자 프로필 이미지 URL
+                            example: https://avatars.githubusercontent.com/u/27201209?v=4
+              paging:
+                type: object
+                properties:
+                  previousCursor:
+                    type: number
+                    description: 무한스크롤 이전 커서
+                  nextCursor:
+                    type: number
+                    description: 무한스크롤 다음 커서

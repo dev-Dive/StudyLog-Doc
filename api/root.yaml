@@ -18,4 +18,7 @@ paths:
     $ref: "./paths/v1/post/post.yaml"
   /api/v1/studies:
     $ref: "./paths/v1/study/studies.yaml"
-
+  /api/v1/studies/{id}:
+    $ref: "./paths/v1/study/study.yaml"
+  /api/v1/studies/{id}/posts:
+    $ref: "./paths/v1/study/posts.yaml"

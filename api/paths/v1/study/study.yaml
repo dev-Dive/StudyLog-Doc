@@ -1,0 +1,45 @@
+get:
+  description: 스터디 정보 조회
+  summary: 스터디 정보 조회
+  tags: [ Study ]
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: 스터디 이름
+                example: 알고리즘 스터디
+              profileImageUrl:
+                type: string
+                format: uri
+                description: 스터디 프로필 이미지 URL
+                example: https://blog.kakaocdn.net/dn/vSeMf/btrwTcbbA4G/iVSYFyV5xoWpEtmW4kjiU1/img.png
+              members:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: 스터디 멤버 식별자
+                    name:
+                      type: string
+                      description: 스터디 멤버 이름
+                    profileImageUrl:
+                      type: string
+                      format: uri
+                      description: 스터디 멤버 프로필 이미지 URL
+
+
+
