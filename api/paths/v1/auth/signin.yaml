@@ -1,6 +1,6 @@
 post:
-  summary: 이메일로 회원가입
-  description: 전송받은 이메일 링크로 회원가입 요청
+  summary: 이메일로 로그인
+  description: 전송받은 이메일 링크을 통해 로그인 요청
   tags: [ Auth ]
   requestBody:
     content:
@@ -12,7 +12,7 @@ post:
               type: string
   responses:
     '200':
-      description: 회원가입 성공 및 인증 토큰 발행
+      description: 로그인 성공 및 인증 토큰 발행
       content:
         application/json:
           schema:

@@ -1,0 +1,21 @@
+post:
+  summary: 인증 이메일 전송
+  description: 회원가입 혹은 로그인 인증 이메일 전송
+  tags: [ Auth ]
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+  responses:
+    "200":
+      description: 성공 - 인증 링크를 이메일로 전송
+    "400":
+      description: 실패 - 잘못된 이메일 형식
+    "409":
+      description: 실패 - 기존에 사용된 이메일
+    "500":
+      description: 실패 - 서버측 인증 링크 발송 실패

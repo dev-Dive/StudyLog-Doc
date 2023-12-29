@@ -1,6 +1,6 @@
 get:
-  summary: 글 읽기
-  description: 스터디 글 하나 읽기
+  summary: 스터디 글 조회
+  description: 스터디 글 단일 조회
   tags: [ Post ]
   parameters:
     - in: path
@@ -11,12 +11,12 @@ get:
         required: true
   responses:
     '200':
-      description: 글 읽기 성공
+      description: 스터디 글 조회 성공
       content:
         application/json:
           schema:
             type: object
-            description: 글 내용
+            description: 스터디 글 내용
             properties:
               title:
                 type: string
@@ -84,23 +84,25 @@ get:
                     | Paragraph   | Text        |
 
                   ![ex_screenshot](https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg)
-              date:
+              createAt:
                 type: string
                 format: date
                 description: 작성일
-              authors:
-                type: array
-                description: 작성자 리스트
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: number
-                      description: 작성자 식별자
-                    name:
-                      type: string
-                      description: 작성자명
-                      example: 고대은
+              updateAt:
+                type: string
+                format: date
+                description: 수정일
+              author:
+                type: object
+                description: 작성자
+                properties:
+                  id:
+                    type: number
+                    description: 작성자 식별자
+                  name:
+                    type: string
+                    description: 작성자명
+                    example: 고대은
               thumbnailImageUrl:
                 type: string
                 description: 대표 이미지 URL
@@ -116,17 +118,13 @@ get:
                     type: string
                     description: 스터디 이름
                     example: 알고리즘 스터디
-                  profile_image_url:
+                  profileImageUrl:
                     type: string
                     description: 스터디 프로필 이미지 URL
                     example: https://blog.kakaocdn.net/dn/vSeMf/btrwTcbbA4G/iVSYFyV5xoWpEtmW4kjiU1/img.png
-                  description:
-                    type: string
-                    description: 스터디 소개글
-                    example: 안녕하세요
               _links:
                 type: object
-                description: 이전, 다음 글 링크
+                description: 이전, 다음 스터디 글 링크
                 properties:
                   next:
                     type: object
