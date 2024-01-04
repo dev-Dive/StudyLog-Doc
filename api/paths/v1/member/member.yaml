@@ -1,0 +1,45 @@
+delete:
+  summary: 회원 탈퇴
+  description: 회원 탈퇴
+  tags: [ Member ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+  responses:
+    '204':
+      description: 성공
+    '401':
+      description: 인증 실패
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+    '403':
+      description: 권한 없음
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+    '303':
+      description: 스터디장 위임 혹은 스터디 완료로 상태 변경 필요
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+

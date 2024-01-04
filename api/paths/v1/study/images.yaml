@@ -1,0 +1,53 @@
+post:
+  summary: 스터디 프로필 이미지 업로드
+  description: 스터디 생성 시 프로필 이미지 업로드
+  tags: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+  requestBody:
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            image:
+              type: string
+              format: binary
+  response:
+    '200':
+      description: 스터디 목록
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: 저장된 프로필 이미지 식별자
+                example: '123'
+    '400':
+      description: 이미지 크기 제한
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: 이미지 크기가 너무 큽니다. (10MB 이하)
+    '401':
+      description: 로그인 필요 - 인증
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지

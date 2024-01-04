@@ -20,7 +20,7 @@ get:
               studiesCount:
                 type: number
                 description: 스터디 개수
-                example: 1디
+                example: 1
               studies:
                 type: array
                 description: 스터디 목록
@@ -51,12 +51,45 @@ post:
           properties:
             name:
               type: string
+              description: 스터디 이름
             description:
               type: string
+              description: 스터디 소개글
+            imageId:
+              type: string
+              description: 업로드한 이미지 식별자
   responses:
     '200':
       description: 성공
+    '400':
+      description: 스터디 이름, 소개글 길이 제한
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: 스터디 이름 길이가 너무 깁니다. (20자 이내)
     '401':
       description: 로그인 필요 - 인증
-    '403':
-      description: 스터디 생성 권한 없음 - 인가
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+    '409':
+      description: 스터디 이름 중복
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: 이미 존재하는 스터디 이름입니다.

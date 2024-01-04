@@ -1,0 +1,30 @@
+post:
+  summary: 스터디 글 좋아요
+  description: 스터디 글 좋아요
+  tags: [ Post ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: number
+      description: 스터디 글 식별자
+      required: true
+  response:
+    '200':
+      description: 성공
+    '409':
+      description: 이미 좋아요 상태
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지

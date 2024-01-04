@@ -20,7 +20,14 @@ paths:
     $ref: "./paths/v1/search/post.yaml"
   /api/v1/search/study:
     $ref: "./paths/v1/search/study.yaml"
-
+  /api/v1/members:
+    $ref: "./paths/v1/member/member.yaml"
+  /api/v1/studies/images:
+    $ref: "./paths/v1/study/images.yaml"
+  /api/v1/posts/{id}/like:
+    $ref: "./paths/v1/post/like.yaml"
+  /api/v1/posts/{id}/unlike:
+    $ref: "./paths/v1/post/unlike.yaml"
 # 변경 안됨
   /api/v1/studies:
     $ref: "./paths/v1/study/studies.yaml"
