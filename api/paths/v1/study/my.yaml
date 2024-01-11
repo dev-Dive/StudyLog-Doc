@@ -1,0 +1,44 @@
+get:
+  summary: 참여 중인 스터디 목록 조회
+  description: 참여 중인 스터디 목록 조회
+  tags: [ Study ]
+  parameters:
+    - in: path
+      name: uid
+      schema:
+        type: number
+      description: 회원 고유 번호
+      required: true
+  responses:
+    '200':
+      description: 스터디 목록
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              studiesCount:
+                type: number
+                description: 스터디 개수
+                example: 1
+              studies:
+                type: array
+                description: 스터디 목록
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: 스터디 식별자
+                    name:
+                      type: string
+                      description: 스터디 이름
+                      example: 알고리즘 스터디
+                    thumbnailUrl:
+                      type: string
+                      format: uri
+                      description: 스터디 썸네일 이미지 URL
+                      example: https://blog.kakaocdn.net/dn/vSeMf/btrwTcbbA4G/iVSYFyV5xoWpEtmW4kjiU1/img.png
+                    isStudyOwner:
+                      type: boolean
+                      description: 스터디장 여부

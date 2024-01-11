@@ -35,3 +35,9 @@ paths:
     $ref: "./paths/v1/study/study.yaml"
   /api/v1/studies/{id}/posts:
     $ref: "./paths/v1/study/posts.yaml"
+  /api/v1/posts/{id}/comments:
+    $ref: "./paths/v1/comment/comments.yaml"
+  /api/v1/comments/{id}/replies:
+    $ref: "./paths/v1/reply/replies.yaml"
+  /api/v1/{uid}/studies:
+    $ref: "./paths/v1/study/my.yaml"

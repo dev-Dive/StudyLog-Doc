@@ -118,3 +118,13 @@ get:
                   nextCursor:
                     type: number
                     description: 다음 스터디 글 커서
+    '5xx':
+      description: 실패
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지

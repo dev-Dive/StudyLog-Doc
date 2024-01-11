@@ -1,0 +1,132 @@
+get:
+  summary: 스터디 글 답글 조회
+  description: 스터디 글 답글 조회
+  tags: [ Reply ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: number
+      description: 스터디 글 댓글 식별자
+      required: true
+  responses:
+    '200':
+      description: 스터디 글 답글 조회 성공
+      content:
+        application/json:
+          schema:
+            type: object
+            description: 스터디 글 답글 내용
+            properties:
+              replies:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: 답글 식별자
+                    createAt:
+                      type: string
+                      description: 작성일
+                      example:
+                        - 1일 전
+                        - 12시간 전
+                        - 2000년 00월 00일
+                    isUpdated:
+                      type: boolean
+                      description: 수정 여부
+                    author:
+                      type: object
+                      description: 작성자
+                      properties:
+                        id:
+                          type: number
+                          description: 작성자 식별자
+                        name:
+                          type: string
+                          description: 작성자명
+                          example: 고대은
+                        isOwn:
+                          type: boolean
+                          description: 답글 소유자 여부
+                    content:
+                      type: string
+                      description: 답글 내용
+    '400':
+      description: 잘못된 답글 식별자
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: 존재하지 않는 답글입니다
+    '5xx':
+      description: 답글 작성 실패
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+post:
+  summary: 스터디 글 답글 작성
+  description: 스터디 글 답글 작성
+  tags: [ Reply ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: number
+      description: 스터디 글 댓글 식별자
+      required: true
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            content:
+              type: string
+              description: 답글 내용
+  responses:
+    '201':
+      description: 답글 작성 성공
+    '400':
+      description: 잘못된 답글 식별자
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: 존재하지 않는 댓글입니다
+    '5xx':
+      description: 실패
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
