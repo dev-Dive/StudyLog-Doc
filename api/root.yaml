@@ -6,38 +6,55 @@ info:
 servers:
   - url: "https://localhost:8080"
 paths:
+  # auth
   /api/v1/auth/email/send:
     $ref: "./paths/v1/auth/send-email.yaml"
   /api/v1/auth/email/signup:
     $ref: "./paths/v1/auth/signup.yaml"
   /api/v1/auth/email/signin:
     $ref: "./paths/v1/auth/signin.yaml"
+  # post
   /api/v1/posts:
     $ref: "./paths/v1/post/posts.yaml"
   /api/v1/posts/{id}:
     $ref: "./paths/v1/post/post.yaml"
-  /api/v1/search/post:
-    $ref: "./paths/v1/search/post.yaml"
-  /api/v1/search/study:
-    $ref: "./paths/v1/search/study.yaml"
-  /api/v1/members:
-    $ref: "./paths/v1/member/member.yaml"
-  /api/v1/studies/images:
-    $ref: "./paths/v1/study/images.yaml"
   /api/v1/posts/{id}/like:
     $ref: "./paths/v1/post/like.yaml"
   /api/v1/posts/{id}/unlike:
     $ref: "./paths/v1/post/unlike.yaml"
-# 변경 안됨
+  /api/v1/{uid}/posts:
+    $ref: "./paths/v1/post/my.yaml"
+  /api/v1/{uid}/liked:
+    $ref: "./paths/v1/post/liked.yaml"
+  # search
+  /api/v1/search/post:
+    $ref: "./paths/v1/search/post.yaml"
+  /api/v1/search/study:
+    $ref: "./paths/v1/search/study.yaml"
+  # member
+  /api/v1/members:
+    $ref: "./paths/v1/member/member.yaml"
+  # study
+  /api/v1/studies/images:
+    $ref: "./paths/v1/study/images.yaml"
   /api/v1/studies:
     $ref: "./paths/v1/study/studies.yaml"
   /api/v1/studies/{id}:
     $ref: "./paths/v1/study/study.yaml"
   /api/v1/studies/{id}/posts:
     $ref: "./paths/v1/study/posts.yaml"
-  /api/v1/posts/{id}/comments:
-    $ref: "./paths/v1/comment/comments.yaml"
-  /api/v1/comments/{id}/replies:
-    $ref: "./paths/v1/reply/replies.yaml"
   /api/v1/{uid}/studies:
     $ref: "./paths/v1/study/my.yaml"
+  /api/v1/studies/{id}/invite:
+    $ref: "./paths/v1/study/invite.yaml"
+#  /api/v1/studies/{id}/invite/{uid}:
+#    $ref: "./paths/v1/study/invite.yaml"
+  # comment
+  /api/v1/posts/{id}/comments:
+    $ref: "./paths/v1/comment/comments.yaml"
+  # reply
+  /api/v1/comments/{id}/replies:
+    $ref: "./paths/v1/reply/replies.yaml"
+  # notice
+  /api/v1/notices:
+    $ref: "/paths/v1/notice/notices.yaml"

@@ -1,0 +1,36 @@
+post:
+  description: 스터디원 초대
+  summary: 이메일로 스터디원 초대
+  tags: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            emails:
+              type: array
+              items:
+                type: string
+                description: 이메일
+                example: qwer123@qwer.com
+  responses:
+    '204':
+      description: 성공
+    '400':
+      description: 실패 - 이메일 형식이 잘못됨
+    '500':
+      description: 실패 - 이메일 전송 실패

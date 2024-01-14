@@ -1,0 +1,32 @@
+post:
+  description: 스터디 가입
+  summary: 이메일로 스터디원 가입
+  tags: [ Study ]
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            emails:
+              type: array
+              items:
+                type: string
+                description: 이메일
+                example: qwer123@qwer.com
+  responses:
+    '204':
+      description: 성공
+    '400':
+      description: 실패 - 이메일 형식이 잘못됨
+    '500':
+      description: 실패 - 이메일 전송 실패
+
+# email 대신 uid로 초대하면 이메일로 들어가지 않아도 된다.

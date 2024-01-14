@@ -20,6 +20,10 @@ get:
                 type: string
                 description: 스터디 이름
                 example: 알고리즘 스터디
+              intro:
+                type: string
+                description: 스터디 소개글
+                example: 안녕하세요. 알고리즘 스터디입니다.
               profileImageUrl:
                 type: string
                 format: uri
@@ -41,5 +45,81 @@ get:
                       format: uri
                       description: 스터디 멤버 프로필 이미지 URL
 
+put:
+  description: 스터디 정보 수정
+  summary: 스터디 정보 수정
+  tags: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  requestBody:
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              description: 스터디 이름
+              example: 알고리즘 스터디
+            intro:
+              type: string
+              description: 스터디 소개글
+              example: 안녕하세요. 알고리즘 스터디입니다.
+            profileImage:
+              type: string
+              format: binary
+              description: 스터디 프로필 이미지
+  responses:
+    '204':
+      description: 성공
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음
+    '409':
+      description: 실패 - 스터디 이름 중복
 
-
+delete:
+  description: 스터디 삭제
+  summary: 스터디 삭제
+  tags: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  responses:
+    '204':
+      description: 성공
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: 스터디장만 스터디를 삭제할 수 있습니다.

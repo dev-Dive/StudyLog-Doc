@@ -1,3 +1,71 @@
+get:
+  summary: 회원 정보 조회
+  description: 회원 정보 조회
+  tags: [ Member ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+  responses:
+    '200':
+      description: 성공
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                description: 인증에 사용된 이메일
+              nickname:
+                type: string
+                description: 닉네임
+              uid:
+                type: number
+                description: 고유 번호
+              avatarImageUrl:
+                type: string
+                description: 아바타 이미지 url
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음
+
+put:
+  summary: 회원 정보 수정
+  description: 회원 정보 수정
+  tags: [ Member ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+  requestBody:
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            nickname:
+              type: string
+              description: 닉네임
+            avatarImage:
+              type: string
+              format: binary
+              description: 아바타 이미지
+  responses:
+    '204':
+      description: 성공
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음
+
 delete:
   summary: 회원 탈퇴
   description: 회원 탈퇴
