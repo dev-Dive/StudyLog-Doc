@@ -4,7 +4,7 @@ post:
   tags: [ Study ]
   requestBody:
     content:
-      application/json:
+      multipart/form-data:
         schema:
           type: object
           properties:
@@ -14,9 +14,9 @@ post:
             description:
               type: string
               description: 스터디 소개글
-            imageId:
-              type: string
-              description: 업로드한 이미지 식별자
+            profileImage:
+              type: binary
+              description: 스터디 프로필 이미지
   responses:
     '200':
       description: 성공

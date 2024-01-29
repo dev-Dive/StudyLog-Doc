@@ -1,6 +1,6 @@
 post:
-  summary: 스터디 프로필 이미지 업로드
-  description: 스터디 생성 시 프로필 이미지 업로드
+  description: 스터디원 추방
+  summary: 스터디원 추방
   tags: [ Study ]
   parameters:
     - in: header
@@ -9,29 +9,27 @@ post:
         type: string
       description: Bearer 인증 토큰 (access-token)
       required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
   requestBody:
     content:
-      multipart/form-data:
+      application/json:
         schema:
           type: object
           properties:
-            image:
+            uid:
               type: string
-              format: binary
-  response:
-    '200':
-      description: 스터디 목록
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                description: 저장된 프로필 이미지 식별자
-                example: '123'
+              description: 사용자 고유 번호
+              example: 1234
+  responses:
+    '204':
+      description: 성공
     '400':
-      description: 이미지 크기 제한
+      description: 실패 - 유효하지 않은 사용자 고유 번호
       content:
         application/json:
           schema:
@@ -40,9 +38,9 @@ post:
               message:
                 type: string
                 description: 오류 메세지
-                example: 이미지 크기가 너무 큽니다. (10MB 이하)
-    '401':
-      description: 로그인 필요 - 인증
+                example: 유효하지 않은 사용자입니다.
+    '403':
+      description: 권한 없음
       content:
         application/json:
           schema:
@@ -51,3 +49,4 @@ post:
               message:
                 type: string
                 description: 오류 메세지
+                example: 스터디원은 해당 스터디의 스터디장만 가능합니다.

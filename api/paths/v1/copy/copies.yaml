@@ -1,7 +1,7 @@
 get:
-  summary: 작성한 스터디 글 리스트 조회
-  description: 작성한 스터디 글 리스트 조회
-  tags: [ Post ]
+  summary: 작성한 스터디 글 복사본 리스트 조회
+  description: 작성한 스터디 글 복사본 리스트 조회
+  tags: [ Copy ]
   parameters:
     - in: path
       name: uid
@@ -31,16 +31,16 @@ get:
             properties:
               data:
                 type: array
-                description: 스터디 글 헤더 정보 리스트
+                description: 복사본 헤더 정보 리스트
                 items:
                   type: object
                   properties:
                     id:
                       type: number
-                      description: 스터디 글 식별자
+                      description: 복사본 식별자
                     thumbnailUrl:
                       type: string
-                      description: 스터디 글 썸네일 URL
+                      description: 복사본 썸네일 URL
                     title:
                       type: string
                       description: 제목
@@ -49,7 +49,7 @@ get:
                       description: 부제
                     createdAt:
                       type: string
-                      description: 스터디 글 생성일
+                      description: 복사본 생성일
                     studies:
                       type: object
                       properties:

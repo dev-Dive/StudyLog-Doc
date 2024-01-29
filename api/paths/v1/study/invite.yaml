@@ -1,6 +1,45 @@
+get:
+  description: 스터디원 초대 현황 조회
+  summary: 스터디원 초대 현황 조회
+  tags: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  responses:
+    '200':
+      description: 스터디원 초대 현황
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                uid:
+                  type: number
+                  description: 회원 고유 번호
+                  example: 1
+                nickname:
+                  type: string
+                  description: 닉네임
+                  example: 고대은
+                avatarImageUrl:
+                  type: string
+                  description: 아바타 이미지 URL
+                  example: https://mblogthumb-phinf.pstatic.net/MjAxOTA4MTJfNjUg/MDAxNTY1NTQyMDg0ODMw.C0cGrxU9Fs1nW56PQnAwmrMnTj3Y6cl2LJjx2mPSUbog.b31qIaT0YNBxt8nKqoLOqt9tGhdpFkiix1JKrwncKcYg.JPEG.megomi/IMG_20190619_125512.jpg?type=w800
 post:
   description: 스터디원 초대
-  summary: 이메일로 스터디원 초대
+  summary: 스터디원 초대
   tags: [ Study ]
   parameters:
     - in: header
@@ -21,16 +60,25 @@ post:
         schema:
           type: object
           properties:
-            emails:
+            uids:
               type: array
               items:
                 type: string
-                description: 이메일
-                example: qwer123@qwer.com
+                description: 사용자 고유 번호
+                example: 1234
   responses:
     '204':
       description: 성공
-    '400':
-      description: 실패 - 이메일 형식이 잘못됨
-    '500':
-      description: 실패 - 이메일 전송 실패
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: \[ '1' \] 은 유효하지 않은 사용자입니다.
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음

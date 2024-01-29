@@ -1,0 +1,41 @@
+post:
+  description: 스터디원 초대 취소
+  summary: 스터디원 초대 취소
+  tags: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            uid:
+              type: string
+              description: 사용자 고유 번호
+              example: 1234
+  responses:
+    '204':
+      description: 성공
+    '400':
+      description: 실패 - 유효하지 않은 사용자 고유 번호
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example: 유효하지 않은 사용자입니다.

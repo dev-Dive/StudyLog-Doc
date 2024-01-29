@@ -1,0 +1,58 @@
+get:
+  summary: 사용자 검색
+  description: 사용자 검색
+  tags: [ Search ]
+  parameters:
+    - in: query
+      name: query
+      schema:
+        type: string
+      required: true
+      description: 검색어
+    - in: query
+      name: cursor
+      schema:
+        type: number
+      required: true
+      description: 다음 사용자 아이디, 초기값은 Long의 최댓값
+    - in: query
+      name: limit
+      schema:
+        type: number
+      required: true
+      description: 청크 단위
+  responses:
+    '200':
+      description: 성공
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                description: 사용자 정보 리스트
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: number
+                      description: 고유 번호
+                    nickname:
+                      type: string
+                      description: 사용자 이름
+                    avatarImageUrl:
+                      type: string
+                      description: 아바타 이미지 url
+              paging:
+                type: object
+                description: 페이징 정보
+                properties:
+                  previousCursor:
+                    type: number
+                    description: 이전 스터디 글 커서
+                  nextCursor:
+                    type: number
+                    description: 다음 스터디 글 커서
+    '400':
+      description: 공백으로 검색 시 실패

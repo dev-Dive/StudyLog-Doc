@@ -20,7 +20,7 @@ get:
                 type: string
                 description: 스터디 이름
                 example: 알고리즘 스터디
-              intro:
+              description:
                 type: string
                 description: 스터디 소개글
                 example: 안녕하세요. 알고리즘 스터디입니다.
@@ -72,7 +72,7 @@ put:
               type: string
               description: 스터디 이름
               example: 알고리즘 스터디
-            intro:
+            description:
               type: string
               description: 스터디 소개글
               example: 안녕하세요. 알고리즘 스터디입니다.

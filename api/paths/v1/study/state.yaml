@@ -1,0 +1,47 @@
+post:
+  summary: 스터디 상태 변경
+  description: 스터디 상태 변경
+  tag: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          state:
+            type: string
+            description: 상태
+            enum:
+              - 모집
+              - 진행
+              - 완료
+  responses:
+    '204':
+      description: 성공
+    '400':
+      description: 실패
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 오류 메세지
+                example:
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음

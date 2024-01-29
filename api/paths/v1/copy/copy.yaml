@@ -1,0 +1,47 @@
+put:
+  summary: 스터디 글 복사본 수정
+  description: 스터디 글 복사본 수정
+  tags: [ Copy ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: number
+        description: 스터디 글 복사본 식별자
+        required: true
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            thumbnailUrl:
+              type: string
+              description: 썸네일 이미지 URL
+            title:
+              type: string
+              description: 제목
+            subtitle:
+              type: string
+              description: 부제
+            content:
+              type: string
+              description: 내용
+  #            tags:
+  #              type: array
+  #              description: 태그명 리스트
+  #              items:
+  #                type: string
+  responses:
+    '200':
+      description: 복사본 수정 성공
+    '401':
+      description: 로그인 필요 - 인증
+    '403':
+      description: 스터디 글 작성 권한 없음 - 인가
