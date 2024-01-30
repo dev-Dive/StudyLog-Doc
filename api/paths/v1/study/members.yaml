@@ -1,0 +1,50 @@
+get:
+  description: 스터디원 목록 조회
+  summary: 스터디원 목록 조회
+  tags: [ Study ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+    - in: path
+      name: id
+      schema:
+        type: string
+      description: 스터디 식별자
+      required: true
+  responses:
+    '200':
+      description: 성공
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              isOwner:
+                type: boolean
+                description: 요청자가 스터디장인지 여부
+              members:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: number
+                      description: 고유 번호
+                    nickname:
+                      type: string
+                      description: 닉네임
+                    avatarImageUrl:
+                      type: string
+                      format: uri
+                      description: 아바타 이미지 URL
+                    role:
+                      type: string
+                      enum: [ 스터디장, 스터디원 ]
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음

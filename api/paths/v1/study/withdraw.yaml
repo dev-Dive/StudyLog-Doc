@@ -1,7 +1,7 @@
 post:
-  summary: 스터디 상태 변경
-  description: 스터디 상태 변경
-  tag: [ Study ]
+  description: 스터디 탈퇴
+  summary: 스터디 탈퇴
+  tags: [ Study ]
   parameters:
     - in: header
       name: Authorization
@@ -20,13 +20,11 @@ post:
       application/json:
         schema:
           type: object
-          state:
-            type: string
-            description: 상태
-            enum:
-              - 모집
-              - 진행
-              - 완료
+          properties:
+            uid:
+              type: string
+              description: 사용자 고유 번호
+              example: 1234
   responses:
     '204':
       description: 성공
@@ -40,7 +38,7 @@ post:
               message:
                 type: string
                 description: 오류 메세지
-                example: 상태를 변경할 수 없습니다.
+                example: 스터디탈퇴에 실패했습니다.
     '401':
       description: 실패 - 로그인 필요
     '403':

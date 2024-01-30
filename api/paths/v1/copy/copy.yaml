@@ -17,13 +17,13 @@ put:
         required: true
   requestBody:
     content:
-      application/json:
+      multipart/form-data:
         schema:
           type: object
           properties:
-            thumbnailUrl:
-              type: string
-              description: 썸네일 이미지 URL
+            thumbnail:
+              type: binary
+              description: 썸네일 이미지
             title:
               type: string
               description: 제목

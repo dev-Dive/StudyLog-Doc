@@ -1,6 +1,6 @@
 post:
-  summary: 자신이 작성한 스터디 글 수정 요청
-  description: 자신이 작성한 스터디 글 수정 요청 - 스터디원 권한
+  summary: 자신이 작성한 스터디 글 삭제 요청
+  description: 자신이 작성한 스터디 글 삭제 요청 - 스터디원 권한
   tags: [ Post ]
   parameters:
     - in: header
@@ -21,19 +21,10 @@ post:
         type: number
         description: 스터디 글 식별자
         required: true
-  requestBody:
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            copyId:
-              type: number
-              description: 스터디 글 복사본 식별자
   responses:
     '200':
-      description: 스터디 글 수정 요청 성공
+      description: 스터디 글 삭제 요청 성공
     '401':
       description: 로그인 필요 - 인증
     '403':
-      description: 스터디 글 수정 권한 없음 - 인가
+      description: 스터디 글 삭제 권한 없음 - 인가

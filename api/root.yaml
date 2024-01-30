@@ -24,6 +24,14 @@ paths:
     $ref: "./paths/v1/post/unlike.yaml"
   /api/v1/{uid}/liked:
     $ref: "./paths/v1/post/liked.yaml"
+  /api/v1/studies/{id}/posts:
+    $ref: "./paths/v1/study/posts.yaml"
+  /api/v1/studies/{studyId}/posts/{postId}:
+    $ref: "./paths/v1/study/post.yaml"
+  /api/v1/studies/{studyId}/posts/{postId}/edit-request:
+    $ref: "./paths/v1/study/edit-request.yaml"
+  /api/v1/studies/{studyId}/posts/{postId}/delete-request:
+    $ref: "./paths/v1/study/delete-request.yaml"
   # search
   /api/v1/search/post:
     $ref: "./paths/v1/search/post.yaml"
@@ -39,15 +47,10 @@ paths:
     $ref: "./paths/v1/study/studies.yaml"
   /api/v1/studies/{id}:
     $ref: "./paths/v1/study/study.yaml"
-  /api/v1/studies/{id}/posts:
-    $ref: "./paths/v1/study/posts.yaml"
-  /api/v1/studies/{studyId}/posts/{postId}:
-    $ref: "./paths/v1/study/post.yaml"
-  /api/v1/studies/{studyId}/posts/{postId}/edit-request:
-    $ref: "./paths/v1/study/edit-request.yaml"
+  /api/v1/studies/{id}/members:
+    $ref: "./paths/v1/study/members.yaml"
   /api/v1/{uid}/studies:
     $ref: "./paths/v1/study/my.yaml"
-  # 한 번에 전부 초대하기 vs 한 명씩 초대하기
   /api/v1/studies/{id}/invite:
     $ref: "./paths/v1/study/invite.yaml"
   /api/v1/studies/{id}/join:
@@ -60,14 +63,13 @@ paths:
     $ref: "./paths/v1/study/delegate.yaml"
   /api/v1/study/{id}/state:
     $ref: "./paths/v1/study/state.yaml"
+  /api/v1/study/{id}/withdraw:
+    $ref: "./paths/v1/study/withdraw.yaml"
   # copy
   /api/v1/{uid}/copies:
     $ref: "./paths/v1/copy/copies.yaml"
   /api/v1/copies/{id}:
     $ref: "./paths/v1/copy/copy.yaml"
-
-#  /api/v1/studies/{id}/members:
-#    $ref: "./paths/v1/study/"
   # comment
   /api/v1/posts/{id}/comments:
     $ref: "./paths/v1/comment/comments.yaml"
