@@ -59,11 +59,11 @@ paths:
     $ref: "./paths/v1/study/invite-cancel.yaml"
   /api/v1/studies/{id}/expel:
     $ref: "./paths/v1/study/expel.yaml"
-  /api/v1/study/{id}/delegate:
+  /api/v1/studies/{id}/delegate:
     $ref: "./paths/v1/study/delegate.yaml"
-  /api/v1/study/{id}/state:
+  /api/v1/studies/{id}/state:
     $ref: "./paths/v1/study/state.yaml"
-  /api/v1/study/{id}/withdraw:
+  /api/v1/studies/{id}/withdraw:
     $ref: "./paths/v1/study/withdraw.yaml"
   # copy
   /api/v1/{uid}/copies:
