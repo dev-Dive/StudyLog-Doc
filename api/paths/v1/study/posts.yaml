@@ -9,6 +9,18 @@ get:
         type: string
       description: 스터디 식별자
       required: true
+    - in: query
+      name: cursor
+      schema:
+        type: number
+      required: true
+      description: 다음 스터디 글 아이디, 초기값은 Long의 최댓값
+    - in: query
+      name: limit
+      schema:
+        type: number
+      required: true
+      description: 청크 단위
   responses:
     '200':
       content:
@@ -24,6 +36,9 @@ get:
                     id:
                       type: number
                       description: 포스트 식별자
+                    thumbnailUrl:
+                      type: string
+                      description: 포스트 썸네일 URL
                     title:
                       type: string
                       description: 포스트 제목
@@ -62,6 +77,9 @@ get:
                   nextCursor:
                     type: number
                     description: 무한스크롤 다음 커서
+                  isLast:
+                    type: boolean
+                    description: 다음 데이터가 있는지 여부
 post:
   summary: 스터디 글 작성
   description: 스터디 글 작성

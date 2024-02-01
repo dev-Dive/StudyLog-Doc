@@ -72,3 +72,6 @@ get:
                   nextCursor:
                     type: number
                     description: 다음 스터디 글 커서
+                  isLast:
+                    type: boolean
+                    description: 다음 데이터가 있는지 여부

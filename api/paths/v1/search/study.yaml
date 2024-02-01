@@ -83,5 +83,8 @@ get:
                   nextCursor:
                     type: number
                     description: 다음 스터디 커서
+                  isLast:
+                    type: boolean
+                    description: 다음 데이터가 있는지 여부
     '400':
       description: 공백으로 검색 시 실패
