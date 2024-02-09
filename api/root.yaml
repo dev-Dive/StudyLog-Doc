@@ -84,4 +84,4 @@ paths:
     $ref: "./paths/v1/reply/replies.yaml"
   # notice
   /api/v1/notices:
-    $ref: "/paths/v1/notice/notices.yaml"
+    $ref: "./paths/v1/notice/notices.yaml"
