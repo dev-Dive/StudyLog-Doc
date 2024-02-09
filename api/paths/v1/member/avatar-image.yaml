@@ -1,0 +1,21 @@
+put:
+  summary: 회원 아바타 이미지 수정
+  description: 회원 아바타 이미지 수정
+  tags: [ Member ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+  requestBody:
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            avatarImage:
+              type: string
+              format: binary
+              description: 아바타 이미지

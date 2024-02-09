@@ -42,6 +42,10 @@ paths:
   # member
   /api/v1/members:
     $ref: "./paths/v1/member/member.yaml"
+  /api/v1/members/avatar-image:
+    $ref: "./paths/v1/member/avatar-image.yaml"
+  /api/v1/members/invites:
+    $ref: "./paths/v1/member/invites.yaml"
   # study
   /api/v1/studies:
     $ref: "./paths/v1/study/studies.yaml"
@@ -55,6 +59,8 @@ paths:
     $ref: "./paths/v1/study/invite.yaml"
   /api/v1/studies/{id}/join:
     $ref: "./paths/v1/study/join.yaml"
+  /api/v1/studies/{id}/reject:
+    $ref: "./paths/v1/study/reject.yaml"
   /api/v1/studies/{id}/invite/cancel:
     $ref: "./paths/v1/study/invite-cancel.yaml"
   /api/v1/studies/{id}/expel:

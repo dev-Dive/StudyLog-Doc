@@ -23,6 +23,9 @@ get:
               nickname:
                 type: string
                 description: 닉네임
+              intro:
+                type: string
+                description: 소개글
               uid:
                 type: number
                 description: 고유 번호
@@ -47,17 +50,16 @@ put:
       required: true
   requestBody:
     content:
-      multipart/form-data:
+      application/json:
         schema:
           type: object
           properties:
             nickname:
               type: string
               description: 닉네임
-            avatarImage:
+            intro:
               type: string
-              format: binary
-              description: 아바타 이미지
+              description: 소개글
   responses:
     '204':
       description: 성공

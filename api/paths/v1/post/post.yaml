@@ -135,6 +135,10 @@ get:
                         format: uri
                         description: 다음 글 링크
                         example: /api/v1/posts/3
+                      id:
+                        type: number
+                        description: 다음 글 식별자
+                        example: 3
                   prev:
                     type: object
                     description: 이전 글
@@ -144,3 +148,7 @@ get:
                         format: uri
                         description: 이전 글 링크
                         example: /api/v1/posts/1
+                      id:
+                        type: number
+                        description: 이전 글 식별자
+                        example: 1
