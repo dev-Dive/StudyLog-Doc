@@ -26,11 +26,11 @@ paths:
     $ref: "./paths/v1/post/liked.yaml"
   /api/v1/studies/{id}/posts:
     $ref: "./paths/v1/study/posts.yaml"
-  /api/v1/studies/{studyId}/posts/{postId}:
+  /api/v1/studies/{study-id}/posts/{post-id}:
     $ref: "./paths/v1/study/post.yaml"
-  /api/v1/studies/{studyId}/posts/{postId}/edit-request:
+  /api/v1/studies/{study-id}/posts/{post-id}/edit-request:
     $ref: "./paths/v1/study/edit-request.yaml"
-  /api/v1/studies/{studyId}/posts/{postId}/delete-request:
+  /api/v1/studies/{study-id}/posts/{post-id}/delete-request:
     $ref: "./paths/v1/study/delete-request.yaml"
   # search
   /api/v1/search/post:
