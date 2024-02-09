@@ -1,7 +1,6 @@
 # StudyLog-Doc
 
-# AlgoWithMe-Doc
-알고 있니? 개발 문서
+REST API 개발 문서
 
 ## API 명세
 
