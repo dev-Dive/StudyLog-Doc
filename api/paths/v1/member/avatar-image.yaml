@@ -19,3 +19,21 @@ put:
               type: string
               format: binary
               description: 아바타 이미지
+delete:
+  summary: 회원 아바타 이미지 삭제
+  description: 회원 아바타 이미지 삭제
+  tags: [ Member ]
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      description: Bearer 인증 토큰 (access-token)
+      required: true
+  responses:
+    '200':
+      description: 삭제 성공
+    '401':
+      description: 실패 - 로그인 필요
+    '403':
+      description: 실패 - 권한 없음
