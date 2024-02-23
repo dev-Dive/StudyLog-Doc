@@ -24,8 +24,6 @@ paths:
     $ref: "./paths/v1/post/unlike.yaml"
   /api/v1/{uid}/liked:
     $ref: "./paths/v1/post/liked.yaml"
-  /api/v1/studies/{id}/posts:
-    $ref: "./paths/v1/study/posts.yaml"
   /api/v1/studies/{study-id}/posts/{post-id}:
     $ref: "./paths/v1/study/post.yaml"
   /api/v1/studies/{study-id}/posts/{post-id}/edit-request:
@@ -53,6 +51,8 @@ paths:
     $ref: "./paths/v1/study/study.yaml"
   /api/v1/studies/{id}/members:
     $ref: "./paths/v1/study/members.yaml"
+  /api/v1/studies/{id}/posts:
+    $ref: "./paths/v1/study/posts.yaml"
   /api/v1/{uid}/studies:
     $ref: "./paths/v1/study/my.yaml"
   /api/v1/studies/{id}/invite:
@@ -83,6 +83,6 @@ paths:
   /api/v1/comments/{id}/replies:
     $ref: "./paths/v1/reply/replies.yaml"
   # notice
-  /api/v1/noticesss:
+  /api/v1/notices:
     $ref: "./paths/v1/notice/notices.yaml"
 
