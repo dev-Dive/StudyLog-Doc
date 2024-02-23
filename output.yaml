@@ -515,14 +515,14 @@ paths:
           name: study-id
           schema:
             type: number
-            description: 스터디 식별자
-            required: true
+          description: 스터디 식별자
+          required: true
         - in: path
           name: post-id
           schema:
             type: number
-            description: 스터디 글 식별자
-            required: true
+          description: 스터디 글 식별자
+          required: true
       requestBody:
         content:
           multipart/form-data:
@@ -564,14 +564,14 @@ paths:
           name: study-id
           schema:
             type: number
-            description: 스터디 식별자
-            required: true
+          description: 스터디 식별자
+          required: true
         - in: path
           name: post-id
           schema:
             type: number
-            description: 스터디 글 식별자
-            required: true
+          description: 스터디 글 식별자
+          required: true
       responses:
         '204':
           description: 스터디 글 삭제 성공
@@ -596,14 +596,14 @@ paths:
           name: study-id
           schema:
             type: number
-            description: 스터디 식별자
-            required: true
+          description: 스터디 식별자
+          required: true
         - in: path
           name: post-id
           schema:
             type: number
-            description: 스터디 글 식별자
-            required: true
+          description: 스터디 글 식별자
+          required: true
       requestBody:
         content:
           application/json:
@@ -637,14 +637,14 @@ paths:
           name: study-id
           schema:
             type: number
-            description: 스터디 식별자
-            required: true
+          description: 스터디 식별자
+          required: true
         - in: path
           name: post-id
           schema:
             type: number
-            description: 스터디 글 식별자
-            required: true
+          description: 스터디 글 식별자
+          required: true
       responses:
         '200':
           description: 스터디 글 삭제 요청 성공
