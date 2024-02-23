@@ -1,9 +1,11 @@
 name: Deploy Swagger UI to Pages
 
 on:
-  push:
-    paths:
-      - 'output.yaml'
+  workflow_run:
+    workflows:
+      - Merge OpenAPI Spec Files
+    types:
+      - completed
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
