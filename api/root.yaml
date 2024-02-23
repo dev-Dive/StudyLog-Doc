@@ -83,6 +83,6 @@ paths:
   /api/v1/comments/{id}/replies:
     $ref: "./paths/v1/reply/replies.yaml"
   # notice
-  /api/v1/notices:
+  /api/v1/noticesss:
     $ref: "./paths/v1/notice/notices.yaml"
 
