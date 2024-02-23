@@ -85,3 +85,4 @@ paths:
   # notice
   /api/v1/notices:
     $ref: "./paths/v1/notice/notices.yaml"
+

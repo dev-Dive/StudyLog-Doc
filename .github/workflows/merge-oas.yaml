@@ -1,0 +1,39 @@
+name: Merge OpenAPI Spec Files
+
+on:
+  push:
+    paths:
+      - 'api/**'
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install swagger-merger
+        run: npm install -g swagger-merger
+
+      - name: Merge Swagger Files
+        run: swagger-merger -i api/root.yaml -o output.yaml
+
+      - name: Commit
+        run: |
+          git config --global user.name 'Daeeun Ko'
+          git config --global user.email '7273322@naver.com'
+          git add output.yaml
+          git commit -m "Merged OAS files"
+      - name: Push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
