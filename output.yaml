@@ -4,27 +4,37 @@ info:
   description: StudyLog
   version: 0.1.0
 servers:
-  - url: 'https://localhost:8080'
+  - url: https://localhost:8080
 paths:
-  /api/v1/auth/mail/send:
+  /api/v1/auth/email/send:
     post:
-      summary: 인증 메일 전송
-      description: 회원가입 혹은 로그인 인증 메일 이메일로 전송
+      summary: 인증 이메일 전송
+      description: 회원가입 혹은 로그인 인증 이메일 전송
+      tags:
+        - Auth
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                mail:
+                email:
                   type: string
       responses:
         '200':
-          description: 성공 - 인증 링크 이메일로 전송
-  /api/v1/auth/mail/register:
+          description: 성공 - 인증 링크를 이메일로 전송
+        '400':
+          description: 실패 - 잘못된 이메일 형식
+        '409':
+          description: 실패 - 기존에 사용된 이메일
+        '500':
+          description: 실패 - 서버측 인증 링크 발송 실패
+  /api/v1/auth/email/signup:
     post:
-      summary: 이메일로 회원가입
-      description: 전송받은 이메일 링크로 회원가입 요청
+      summary: 인증 링크로 회원가입
+      description: 전송받은 이메일 링크를 통해 회원가입 요청
+      tags:
+        - Auth
       requestBody:
         content:
           application/json:
@@ -33,9 +43,12 @@ paths:
               properties:
                 token:
                   type: string
+                nickname:
+                  type: string
+                  description: 닉네임
       responses:
         '200':
-          description: 회원가입 성공 및 인증 토큰 발행
+          description: 회원가입 성공 및 인증 및 인가 토큰 발행
           content:
             application/json:
               schema:
@@ -47,10 +60,12 @@ paths:
                     type: string
         '401':
           description: 토큰 인증 실패
-  /api/v1/auth/mail/login:
+  /api/v1/auth/email/signin:
     post:
       summary: 이메일로 로그인
-      description: 전송받은 이메일 링크로 로그인 요청
+      description: 전송받은 이메일 링크을 통해 로그인 요청
+      tags:
+        - Auth
       requestBody:
         content:
           application/json:
@@ -71,72 +86,36 @@ paths:
                     type: string
                   refreshToken:
                     type: string
-        '400':
-          description: 유효하지 않은 요청 - 요청 바디에 필요한 값이 없음
         '401':
           description: 토큰 인증 실패
-        '415':
-          description: Content-Type 헤더가 application/json이 아님
   /api/v1/posts:
-    post:
-      summary: 글 작성
-      description: 스터디 글 작성
-      parameters:
-        - in: header
-          name: Authorization
-          schema:
-            type: string
-          description: Bearer 인증 토큰 (access-token)
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                studyId:
-                  type: number
-                  description: 스터디 식별자
-                thumbnailUrl:
-                  type: string
-                  description: 썸네일 이미지 URL
-                title:
-                  type: string
-                  description: 제목
-                subtitle:
-                  type: string
-                  description: 부제
-                content:
-                  type: string
-                  description: 내용
-                tags:
-                  type: array
-                  description: 태그명 리스트
-                  items:
-                    type: string
-      responses:
-        '200':
-          description: 글 작성 성공
-        '401':
-          description: 로그인 필요 - 인증
-        '403':
-          description: 글 작성 권한 없음 - 인가
     get:
-      summary: 최신 글 목록 불러오기
-      description: '최신 글 목록 불러오기, 무한 스크롤'
+      summary: 스터디 글 목록 조회
+      description: 스터디 글 목록 조회, 무한 스크롤
+      tags:
+        - Post
       parameters:
         - in: query
           name: cursor
           schema:
             type: number
           required: true
-          description: '다음 포스트 아이디, 초기값은 Long의 최댓값'
+          description: 다음 스터디 글 아이디, 초기값은 Long의 최댓값
         - in: query
           name: limit
           schema:
             type: number
           required: true
           description: 청크 단위
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+              - recent
+            default: recent
+          required: true
+          description: 정렬 방법
       responses:
         '200':
           description: 성공
@@ -147,16 +126,16 @@ paths:
                 properties:
                   data:
                     type: array
-                    description: 포스트 정보 리스트
+                    description: 스터디 글 헤더 정보 리스트
                     items:
                       type: object
                       properties:
                         id:
                           type: number
-                          description: 포스트 식별자
+                          description: 스터디 글 식별자
                         thumbnailUrl:
                           type: string
-                          description: 포스트 썸네일 URL
+                          description: 스터디 글 썸네일 URL
                         title:
                           type: string
                           description: 제목
@@ -165,7 +144,7 @@ paths:
                           description: 부제
                         createdAt:
                           type: string
-                          description: 포스트 생성일
+                          description: 스터디 글 생성일
                         studies:
                           type: object
                           properties:
@@ -184,14 +163,29 @@ paths:
                     properties:
                       previousCursor:
                         type: number
-                        description: 이전 포스트 커서
+                        description: 이전 스터디 글 커서
                       nextCursor:
                         type: number
-                        description: 다음 포스트 커서
-  '/api/v1/posts/{id}':
+                        description: 다음 스터디 글 커서
+                      isLast:
+                        type: boolean
+                        description: 다음 데이터가 있는지 여부
+        5xx:
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+  /api/v1/posts/{id}:
     get:
-      summary: 글 읽기
-      description: 스터디 글 하나 읽기
+      summary: 스터디 글 조회
+      description: 스터디 글 단일 조회
+      tags:
+        - Post
       parameters:
         - in: path
           name: id
@@ -201,41 +195,120 @@ paths:
             required: true
       responses:
         '200':
-          description: 글 읽기 성공
+          description: 스터디 글 조회 성공
           content:
             application/json:
               schema:
                 type: object
-                description: 글 내용
+                description: 스터디 글 내용
                 properties:
                   title:
                     type: string
                     description: 제목
+                    example: 개쩌는 스터디 정리글
                   subtitle:
                     type: string
                     description: 부제
+                    example: 안보고는 못 배긴다
                   content:
                     type: string
                     description: 내용
-                  date:
+                    example: >
+                      # 제목 1
+
+                      ## 제목 2
+
+                      ### 제목 3
+
+                      #### 제목 4
+
+                      ##### 제목 5
+
+                      ###### 제목 6
+
+
+                      *기운 글자*
+
+
+                      **볼드**
+
+
+
+                      - 목록
+
+
+                      ```js
+
+                      const a = 1;
+
+                      const b = 2;
+
+                      ```
+
+
+                      ```python
+
+                      print("안녕하세요.\n만나서\t\t반갑습니다.")
+
+                      ```
+
+
+                      ```java
+
+                      public class Main {
+                          public static void main(String[] args) {
+                             System. out.println("Hello World" );
+                          }
+                      }
+
+                      ```
+
+                       # heading 1
+                        ## heading 2
+                        ### heading 3
+                        ~~strikethrough~~  
+
+                        > Blockquote  
+
+                        **strong**  
+                        *italics*  
+                        ***
+                        [Gmail](https://gmail.com)  
+                        ***
+                        1. ordered list
+                        2. ordered list
+                        - unordered list
+                        - unordered list  
+
+                        | Syntax      | Description |
+                        | ----------- | ----------- |
+                        | Header      | Title       |
+                        | Paragraph   | Text        |
+
+                      ![ex_screenshot](https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg)
+                  createAt:
                     type: string
                     format: date
                     description: 작성일
-                  authors:
-                    type: array
-                    description: 작성자 리스트
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: number
-                          description: 작성자 식별자
-                        name:
-                          type: string
-                          description: 작성자명
+                  updateAt:
+                    type: string
+                    format: date
+                    description: 수정일
+                  author:
+                    type: object
+                    description: 작성자
+                    properties:
+                      id:
+                        type: number
+                        description: 작성자 식별자
+                      name:
+                        type: string
+                        description: 작성자명
+                        example: 고대은
                   thumbnailImageUrl:
                     type: string
                     description: 대표 이미지 URL
+                    example: https://avatars.githubusercontent.com/u/27201209?v=4
                   study:
                     type: object
                     description: 스터디 정보
@@ -246,15 +319,15 @@ paths:
                       name:
                         type: string
                         description: 스터디 이름
-                      profile_image_url:
+                        example: 알고리즘 스터디
+                      profileImageUrl:
                         type: string
                         description: 스터디 프로필 이미지 URL
-                      description:
-                        type: string
-                        description: 스터디 소개글
+                        example: >-
+                          https://blog.kakaocdn.net/dn/vSeMf/btrwTcbbA4G/iVSYFyV5xoWpEtmW4kjiU1/img.png
                   _links:
                     type: object
-                    description: '이전, 다음 글 링크'
+                    description: 이전, 다음 스터디 글 링크
                     properties:
                       next:
                         type: object
@@ -262,32 +335,1978 @@ paths:
                         properties:
                           href:
                             type: string
+                            format: uri
                             description: 다음 글 링크
+                            example: /api/v1/posts/3
+                          id:
+                            type: number
+                            description: 다음 글 식별자
+                            example: 3
                       prev:
                         type: object
                         description: 이전 글
                         properties:
                           href:
                             type: string
+                            format: uri
                             description: 이전 글 링크
-  /api/v1/studies:
+                            example: /api/v1/posts/1
+                          id:
+                            type: number
+                            description: 이전 글 식별자
+                            example: 1
+  /api/v1/posts/{id}/like:
     post:
-      summary: 스터디 생성
-      description: 스터디 생성
+      summary: 스터디 글 좋아요
+      description: 스터디 글 좋아요
+      tags:
+        - Post
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+          description: 스터디 글 식별자
+          required: true
+      response:
+        '200':
+          description: 성공
+        '409':
+          description: 이미 좋아요 상태
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+  /api/v1/posts/{id}/unlike:
+    post:
+      summary: 스터디 글 좋아요 취소
+      description: 스터디 글 좋아요 취소
+      tags:
+        - Post
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+          description: 스터디 글 식별자
+          required: true
+      response:
+        '200':
+          description: 성공
+        '409':
+          description: 이미 좋아요 취소 상태
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+  /api/v1/{uid}/liked:
+    get:
+      summary: 좋아요를 누른 스터디 글 리스트 조회
+      description: 좋아요를 누른 스터디 글 리스트 조회
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: uid
+          schema:
+            type: number
+          description: 회원 고유 번호
+          required: true
+        - in: query
+          name: cursor
+          schema:
+            type: number
+          required: true
+          description: 다음 스터디 글 아이디, 초기값은 Long의 최댓값
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: true
+          description: 청크 단위
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: 스터디 글 헤더 정보 리스트
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 스터디 글 식별자
+                        thumbnailUrl:
+                          type: string
+                          description: 스터디 글 썸네일 URL
+                        title:
+                          type: string
+                          description: 제목
+                        subtitle:
+                          type: string
+                          description: 부제
+                        createdAt:
+                          type: string
+                          description: 스터디 글 생성일
+                        studies:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                              description: 스터디 식별자
+                            name:
+                              type: string
+                              description: 스터디 이름
+                            profileImageUrl:
+                              type: string
+                              description: 스터디 대표 이미지 URL
+                  paging:
+                    type: object
+                    description: 페이징 정보
+                    properties:
+                      previousCursor:
+                        type: number
+                        description: 이전 스터디 글 커서
+                      nextCursor:
+                        type: number
+                        description: 다음 스터디 글 커서
+                      isLast:
+                        type: boolean
+                        description: 다음 데이터가 있는지 여부
+  /api/v1/studies/{id}/posts:
+    get:
+      description: 스터디의 포스트 목록 조회
+      summary: 스터디의 포스트 목록 조회
+      tags:
+        - Study
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+        - in: query
+          name: cursor
+          schema:
+            type: number
+          required: true
+          description: 다음 스터디 글 아이디, 초기값은 Long의 최댓값
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: true
+          description: 청크 단위
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 포스트 식별자
+                        thumbnailUrl:
+                          type: string
+                          description: 포스트 썸네일 URL
+                        title:
+                          type: string
+                          description: 포스트 제목
+                          example: 개쩌는 포스트
+                        subtitle:
+                          type: string
+                          description: 포스트 부제목
+                          example: 쯘다쯔러
+                        date:
+                          type: string
+                          format: date
+                          description: 포스트 작성일
+                        authors:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: number
+                                description: 작성자 식별자
+                              name:
+                                type: string
+                                description: 작성자 이름
+                                example: 고대은
+                              profileImageUrl:
+                                type: string
+                                format: uri
+                                description: 작성자 프로필 이미지 URL
+                                example: >-
+                                  https://avatars.githubusercontent.com/u/27201209?v=4
+                  paging:
+                    type: object
+                    properties:
+                      previousCursor:
+                        type: number
+                        description: 무한스크롤 이전 커서
+                      nextCursor:
+                        type: number
+                        description: 무한스크롤 다음 커서
+                      isLast:
+                        type: boolean
+                        description: 다음 데이터가 있는지 여부
+    post:
+      summary: 스터디 글 작성
+      description: 스터디 글 작성
+      tags:
+        - Post
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: studyId
+          schema:
+            type: number
+            description: 스터디 식별자
+            required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                thumbnail:
+                  type: binary
+                  description: 썸네일 이미지
+                title:
+                  type: string
+                  description: 제목
+                subtitle:
+                  type: string
+                  description: 부제
+                content:
+                  type: string
+                  description: 내용
+      responses:
+        '200':
+          description: 스터디 글 작성 성공
+        '401':
+          description: 로그인 필요 - 인증
+        '403':
+          description: 스터디 글 작성 권한 없음 - 인가
+  /api/v1/studies/{study-id}/posts/{post-id}:
+    put:
+      summary: 스터디 글 수정
+      description: 스터디 글 수정 - 스터디 장 권한
+      tags:
+        - Post
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: studyId
+          schema:
+            type: number
+            description: 스터디 식별자
+            required: true
+        - in: path
+          name: postId
+          schema:
+            type: number
+            description: 스터디 글 식별자
+            required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                thumbnail:
+                  type: binary
+                  description: 썸네일 이미지
+                title:
+                  type: string
+                  description: 제목
+                subtitle:
+                  type: string
+                  description: 부제
+                content:
+                  type: string
+                  description: 내용
+      responses:
+        '200':
+          description: 스터디 글 작성 성공
+        '401':
+          description: 로그인 필요 - 인증
+        '403':
+          description: 스터디 글 작성 권한 없음 - 인가
+    delete:
+      summary: 스터디 글 삭제
+      description: 스터디 글 삭제 - 스터디 장 권한
+      tags:
+        - Post
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: studyId
+          schema:
+            type: number
+            description: 스터디 식별자
+            required: true
+        - in: path
+          name: postId
+          schema:
+            type: number
+            description: 스터디 글 식별자
+            required: true
+      responses:
+        '204':
+          description: 스터디 글 삭제 성공
+        '401':
+          description: 로그인 필요 - 인증
+        '403':
+          description: 스터디 글 작성 권한 없음 - 인가
+  /api/v1/studies/{study-id}/posts/{post-id}/edit-request:
+    post:
+      summary: 자신이 작성한 스터디 글 수정 요청
+      description: 자신이 작성한 스터디 글 수정 요청 - 스터디원 권한
+      tags:
+        - Post
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: studyId
+          schema:
+            type: number
+            description: 스터디 식별자
+            required: true
+        - in: path
+          name: postId
+          schema:
+            type: number
+            description: 스터디 글 식별자
+            required: true
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                name:
-                  type: string
-                description:
-                  type: string
+                copyId:
+                  type: number
+                  description: 스터디 글 복사본 식별자
       responses:
         '200':
-          description: 성공
+          description: 스터디 글 수정 요청 성공
         '401':
           description: 로그인 필요 - 인증
         '403':
-          description: 스터디 생성 권한 없음 - 인가
+          description: 스터디 글 수정 권한 없음 - 인가
+  /api/v1/studies/{study-id}/posts/{post-id}/delete-request:
+    post:
+      summary: 자신이 작성한 스터디 글 삭제 요청
+      description: 자신이 작성한 스터디 글 삭제 요청 - 스터디원 권한
+      tags:
+        - Post
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: studyId
+          schema:
+            type: number
+            description: 스터디 식별자
+            required: true
+        - in: path
+          name: postId
+          schema:
+            type: number
+            description: 스터디 글 식별자
+            required: true
+      responses:
+        '200':
+          description: 스터디 글 삭제 요청 성공
+        '401':
+          description: 로그인 필요 - 인증
+        '403':
+          description: 스터디 글 삭제 권한 없음 - 인가
+  /api/v1/search/post:
+    get:
+      summary: 스터디 글 검색
+      description: 스터디 글 검색
+      tags:
+        - Search
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: 검색어
+        - in: query
+          name: cursor
+          schema:
+            type: number
+          required: true
+          description: 다음 스터디 글 아이디, 초기값은 Long의 최댓값
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: true
+          description: 청크 단위
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: 스터디 글 헤더 정보 리스트
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 스터디 글 식별자
+                        thumbnailUrl:
+                          type: string
+                          description: 스터디 글 썸네일 URL
+                        title:
+                          type: string
+                          description: 제목
+                        subtitle:
+                          type: string
+                          description: 부제
+                        summary:
+                          type: string
+                          description: 스터디 글 내용 요약
+                        createdAt:
+                          type: string
+                          description: 스터디 글 생성일
+                        studies:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                              description: 스터디 식별자
+                            name:
+                              type: string
+                              description: 스터디 이름
+                            profileImageUrl:
+                              type: string
+                              description: 스터디 대표 이미지 URL
+                  paging:
+                    type: object
+                    description: 페이징 정보
+                    properties:
+                      previousCursor:
+                        type: number
+                        description: 이전 스터디 글 커서
+                      nextCursor:
+                        type: number
+                        description: 다음 스터디 글 커서
+                      isLast:
+                        type: boolean
+                        description: 다음 데이터가 있는지 여부
+        '400':
+          description: 공백으로 검색 시 실패
+  /api/v1/search/study:
+    get:
+      summary: 스터디 검색
+      description: 스터디 검색
+      tags:
+        - Search
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: 검색어
+        - in: query
+          name: status
+          schema:
+            type: number
+            enum:
+              - recruiting
+              - ongoing
+              - done
+          required: false
+          description: 스터디 상태
+        - in: query
+          name: cursor
+          schema:
+            type: number
+          required: true
+          description: 다음 스터디 아이디, 초기값은 Long의 최댓값
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: true
+          description: 청크 단위
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: 스터디 헤더 정보 리스트
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 스터디 식별자
+                        profileImageUrl:
+                          type: string
+                          description: 스터디 대표 URL
+                        name:
+                          type: string
+                          description: 스터디 이름
+                        status:
+                          type: string
+                          description: 스터디 상태
+                          enum:
+                            - 모집중
+                            - 진행중
+                            - 완료
+                        members:
+                          type: array
+                          description: 스터디원
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: number
+                                description: 스터디원 식별자
+                              name:
+                                type: string
+                                description: 스터디원 이름
+                              avatarUrl:
+                                type: string
+                                description: 스터디원 아바타 URL
+                  paging:
+                    type: object
+                    description: 페이징 정보
+                    properties:
+                      previousCursor:
+                        type: number
+                        description: 이전 스터디 커서
+                      nextCursor:
+                        type: number
+                        description: 다음 스터디 커서
+                      isLast:
+                        type: boolean
+                        description: 다음 데이터가 있는지 여부
+        '400':
+          description: 공백으로 검색 시 실패
+  /api/v1/search/member:
+    get:
+      summary: 사용자 검색
+      description: 사용자 검색
+      tags:
+        - Search
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: 검색어
+        - in: query
+          name: cursor
+          schema:
+            type: number
+          required: true
+          description: 다음 사용자 아이디, 초기값은 Long의 최댓값
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: true
+          description: 청크 단위
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: 사용자 정보 리스트
+                    items:
+                      type: object
+                      properties:
+                        uid:
+                          type: number
+                          description: 고유 번호
+                        nickname:
+                          type: string
+                          description: 사용자 이름
+                        avatarImageUrl:
+                          type: string
+                          description: 아바타 이미지 url
+                  paging:
+                    type: object
+                    description: 페이징 정보
+                    properties:
+                      previousCursor:
+                        type: number
+                        description: 이전 스터디 글 커서
+                      nextCursor:
+                        type: number
+                        description: 다음 스터디 글 커서
+                      isLast:
+                        type: boolean
+                        description: 다음 데이터가 있는지 여부
+        '400':
+          description: 공백으로 검색 시 실패
+  /api/v1/members:
+    get:
+      summary: 회원 정보 조회
+      description: 회원 정보 조회
+      tags:
+        - Member
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: 인증에 사용된 이메일
+                  nickname:
+                    type: string
+                    description: 닉네임
+                  intro:
+                    type: string
+                    description: 소개글
+                  uid:
+                    type: number
+                    description: 고유 번호
+                  avatarImageUrl:
+                    type: string
+                    description: 아바타 이미지 url
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+    put:
+      summary: 회원 정보 수정
+      description: 회원 정보 수정
+      tags:
+        - Member
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                  description: 닉네임
+                intro:
+                  type: string
+                  description: 소개글
+      responses:
+        '204':
+          description: 성공
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+    delete:
+      summary: 회원 탈퇴
+      description: 회원 탈퇴
+      tags:
+        - Member
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+      responses:
+        '204':
+          description: 성공
+        '303':
+          description: 스터디장 위임 혹은 스터디 완료로 상태 변경 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+        '401':
+          description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+        '403':
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+  /api/v1/members/avatar-image:
+    put:
+      summary: 회원 아바타 이미지 수정
+      description: 회원 아바타 이미지 수정
+      tags:
+        - Member
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatarImage:
+                  type: string
+                  format: binary
+                  description: 아바타 이미지
+    delete:
+      summary: 회원 아바타 이미지 삭제
+      description: 회원 아바타 이미지 삭제
+      tags:
+        - Member
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+      responses:
+        '200':
+          description: 삭제 성공
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+  /api/v1/members/invites:
+    get:
+      summary: 받은 초대 현황 조회
+      description: 회원이 받은 초대 현황 조회
+      tags:
+        - Member
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studiesCount:
+                    type: number
+                    description: 스터디 개수
+                    example: 1
+                  studies:
+                    type: array
+                    description: 스터디 목록
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 스터디 식별자
+                        name:
+                          type: string
+                          description: 스터디 이름
+                          example: 알고리즘 스터디
+                        thumbnailUrl:
+                          type: string
+                          format: uri
+                          description: 스터디 썸네일 이미지 URL
+                          example: >-
+                            https://blog.kakaocdn.net/dn/vSeMf/btrwTcbbA4G/iVSYFyV5xoWpEtmW4kjiU1/img.png
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+  /api/v1/studies:
+    post:
+      summary: 스터디 생성
+      description: 스터디 생성
+      tags:
+        - Study
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 스터디 이름
+                description:
+                  type: string
+                  description: 스터디 소개글
+                profileImage:
+                  type: binary
+                  description: 스터디 프로필 이미지
+      responses:
+        '200':
+          description: 성공
+        '400':
+          description: 스터디 이름, 소개글 길이 제한
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 스터디 이름 길이가 너무 깁니다. (20자 이내)
+        '401':
+          description: 로그인 필요 - 인증
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+        '409':
+          description: 스터디 이름 중복
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 이미 존재하는 스터디 이름입니다.
+  /api/v1/studies/{id}:
+    get:
+      description: 스터디 정보 조회
+      summary: 스터디 정보 조회
+      tags:
+        - Study
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 스터디 이름
+                    example: 알고리즘 스터디
+                  description:
+                    type: string
+                    description: 스터디 소개글
+                    example: 안녕하세요. 알고리즘 스터디입니다.
+                  profileImageUrl:
+                    type: string
+                    format: uri
+                    description: 스터디 프로필 이미지 URL
+                    example: >-
+                      https://blog.kakaocdn.net/dn/vSeMf/btrwTcbbA4G/iVSYFyV5xoWpEtmW4kjiU1/img.png
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 스터디 멤버 식별자
+                        name:
+                          type: string
+                          description: 스터디 멤버 이름
+                        profileImageUrl:
+                          type: string
+                          format: uri
+                          description: 스터디 멤버 프로필 이미지 URL
+    put:
+      description: 스터디 정보 수정
+      summary: 스터디 정보 수정
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 스터디 이름
+                  example: 알고리즘 스터디
+                description:
+                  type: string
+                  description: 스터디 소개글
+                  example: 안녕하세요. 알고리즘 스터디입니다.
+                profileImage:
+                  type: string
+                  format: binary
+                  description: 스터디 프로필 이미지
+      responses:
+        '204':
+          description: 성공
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+        '409':
+          description: 실패 - 스터디 이름 중복
+    delete:
+      description: 스터디 삭제
+      summary: 스터디 삭제
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      responses:
+        '204':
+          description: 성공
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 스터디장만 스터디를 삭제할 수 있습니다.
+  /api/v1/studies/{id}/members:
+    get:
+      description: 스터디원 목록 조회
+      summary: 스터디원 목록 조회
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isOwner:
+                    type: boolean
+                    description: 요청자가 스터디장인지 여부
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uid:
+                          type: number
+                          description: 고유 번호
+                        nickname:
+                          type: string
+                          description: 닉네임
+                        avatarImageUrl:
+                          type: string
+                          format: uri
+                          description: 아바타 이미지 URL
+                        role:
+                          type: string
+                          enum:
+                            - 스터디장
+                            - 스터디원
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+  /api/v1/{uid}/studies:
+    get:
+      summary: 참여 중인 스터디 목록 조회
+      description: 참여 중인 스터디 목록 조회
+      tags:
+        - Study
+      parameters:
+        - in: path
+          name: uid
+          schema:
+            type: number
+          description: 회원 고유 번호
+          required: true
+      responses:
+        '200':
+          description: 스터디 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studiesCount:
+                    type: number
+                    description: 스터디 개수
+                    example: 1
+                  studies:
+                    type: array
+                    description: 스터디 목록
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 스터디 식별자
+                        name:
+                          type: string
+                          description: 스터디 이름
+                          example: 알고리즘 스터디
+                        thumbnailUrl:
+                          type: string
+                          format: uri
+                          description: 스터디 썸네일 이미지 URL
+                          example: >-
+                            https://blog.kakaocdn.net/dn/vSeMf/btrwTcbbA4G/iVSYFyV5xoWpEtmW4kjiU1/img.png
+                        isStudyOwner:
+                          type: boolean
+                          description: 스터디장 여부
+  /api/v1/studies/{id}/invite:
+    get:
+      description: 스터디원 초대 현황 조회
+      summary: 스터디원 초대 현황 조회
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      responses:
+        '200':
+          description: 스터디원 초대 현황
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: number
+                      description: 회원 고유 번호
+                      example: 1
+                    nickname:
+                      type: string
+                      description: 닉네임
+                      example: 고대은
+                    avatarImageUrl:
+                      type: string
+                      description: 아바타 이미지 URL
+                      example: >-
+                        https://mblogthumb-phinf.pstatic.net/MjAxOTA4MTJfNjUg/MDAxNTY1NTQyMDg0ODMw.C0cGrxU9Fs1nW56PQnAwmrMnTj3Y6cl2LJjx2mPSUbog.b31qIaT0YNBxt8nKqoLOqt9tGhdpFkiix1JKrwncKcYg.JPEG.megomi/IMG_20190619_125512.jpg?type=w800
+    post:
+      description: 스터디원 초대
+      summary: 스터디원 초대
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uids:
+                  type: array
+                  items:
+                    type: string
+                    description: 사용자 고유 번호
+                    example: 1234
+      responses:
+        '204':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: \[ '1' \] 은 유효하지 않은 사용자입니다.
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+  /api/v1/studies/{id}/join:
+    post:
+      description: 스터디 가입
+      summary: 스터디원 가입
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      responses:
+        '204':
+          description: 성공
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 초대되지 않은 사용자입니다.
+  /api/v1/studies/{id}/reject:
+    post:
+      description: 스터디 가입 거절
+      summary: 스터디원 가입 거절
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      responses:
+        '204':
+          description: 성공
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 초대되지 않은 사용자입니다.
+  /api/v1/studies/{id}/invite/cancel:
+    post:
+      description: 스터디원 초대 취소
+      summary: 스터디원 초대 취소
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  description: 사용자 고유 번호
+                  example: 1234
+      responses:
+        '204':
+          description: 성공
+        '400':
+          description: 실패 - 유효하지 않은 사용자 고유 번호
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 유효하지 않은 사용자입니다.
+  /api/v1/studies/{id}/expel:
+    post:
+      description: 스터디원 추방
+      summary: 스터디원 추방
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  description: 사용자 고유 번호
+                  example: 1234
+      responses:
+        '204':
+          description: 성공
+        '400':
+          description: 실패 - 유효하지 않은 사용자 고유 번호
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 유효하지 않은 사용자입니다.
+        '403':
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 스터디원은 해당 스터디의 스터디장만 가능합니다.
+  /api/v1/studies/{id}/delegate:
+    post:
+      description: 스터디장 위임
+      summary: 스터디장 위임
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  description: 사용자 고유 번호
+                  example: 1234
+      responses:
+        '204':
+          description: 성공
+        '400':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 스터디 장 위임에 실패했습니다.
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+  /api/v1/studies/{id}/state:
+    post:
+      summary: 스터디 상태 변경
+      description: 스터디 상태 변경
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  type: string
+                  description: 상태
+                  enum:
+                    - 진행
+                    - 완료
+      responses:
+        '204':
+          description: 성공
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+  /api/v1/studies/{id}/withdraw:
+    post:
+      description: 스터디 탈퇴
+      summary: 스터디 탈퇴
+      tags:
+        - Study
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          description: 스터디 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  description: 사용자 고유 번호
+                  example: 1234
+      responses:
+        '204':
+          description: 성공
+        '400':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 스터디탈퇴에 실패했습니다.
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
+  /api/v1/{uid}/copies:
+    get:
+      summary: 작성한 스터디 글 복사본 리스트 조회
+      description: 작성한 스터디 글 복사본 리스트 조회
+      tags:
+        - Copy
+      parameters:
+        - in: path
+          name: uid
+          schema:
+            type: number
+          description: 회원 고유 번호
+          required: true
+        - in: query
+          name: cursor
+          schema:
+            type: number
+          required: true
+          description: 다음 스터디 글 아이디, 초기값은 Long의 최댓값
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: true
+          description: 청크 단위
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: 복사본 헤더 정보 리스트
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 복사본 식별자
+                        thumbnailUrl:
+                          type: string
+                          description: 복사본 썸네일 URL
+                        title:
+                          type: string
+                          description: 제목
+                        subtitle:
+                          type: string
+                          description: 부제
+                        createdAt:
+                          type: string
+                          description: 복사본 생성일
+                        studies:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                              description: 스터디 식별자
+                            name:
+                              type: string
+                              description: 스터디 이름
+                            profileImageUrl:
+                              type: string
+                              description: 스터디 대표 이미지 URL
+                  paging:
+                    type: object
+                    description: 페이징 정보
+                    properties:
+                      previousCursor:
+                        type: number
+                        description: 이전 스터디 글 커서
+                      nextCursor:
+                        type: number
+                        description: 다음 스터디 글 커서
+                      isLast:
+                        type: boolean
+                        description: 다음 데이터가 있는지 여부
+  /api/v1/copies/{id}:
+    put:
+      summary: 스터디 글 복사본 수정
+      description: 스터디 글 복사본 수정
+      tags:
+        - Copy
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            description: 스터디 글 복사본 식별자
+            required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                thumbnail:
+                  type: binary
+                  description: 썸네일 이미지
+                title:
+                  type: string
+                  description: 제목
+                subtitle:
+                  type: string
+                  description: 부제
+                content:
+                  type: string
+                  description: 내용
+      responses:
+        '200':
+          description: 복사본 수정 성공
+        '401':
+          description: 로그인 필요 - 인증
+        '403':
+          description: 스터디 글 작성 권한 없음 - 인가
+  /api/v1/posts/{id}/comments:
+    get:
+      summary: 스터디 글 댓글 조회
+      description: 스터디 글 댓글 조회
+      tags:
+        - Comment
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+          description: 스터디 글 식별자
+          required: true
+      responses:
+        '200':
+          description: 스터디 글 댓글 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 스터디 글 댓글 내용
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 댓글 식별자
+                        createAt:
+                          type: string
+                          description: 작성일
+                          example:
+                            - 1일 전
+                            - 12시간 전
+                            - 2000년 00월 00일
+                        isUpdated:
+                          type: boolean
+                          description: 수정 여부
+                        author:
+                          type: object
+                          description: 작성자
+                          properties:
+                            id:
+                              type: number
+                              description: 작성자 식별자
+                            name:
+                              type: string
+                              description: 작성자명
+                              example: 고대은
+                            isOwn:
+                              type: boolean
+                              description: 댓글 소유자 여부
+                        content:
+                          type: string
+                          description: 댓글 내용
+    post:
+      summary: 스터디 글 댓글 작성
+      description: 스터디 글 댓글 작성
+      tags:
+        - Comment
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+          description: 스터디 글 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: 댓글 내용
+      responses:
+        '201':
+          description: 댓글 작성 성공
+        '400':
+          description: 잘못된 댓글 식별자
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 존재하지 않는 댓글입니다
+        5xx:
+          description: 댓글 작성 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+  /api/v1/comments/{id}/replies:
+    get:
+      summary: 스터디 글 답글 조회
+      description: 스터디 글 답글 조회
+      tags:
+        - Reply
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+          description: 스터디 글 댓글 식별자
+          required: true
+      responses:
+        '200':
+          description: 스터디 글 답글 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 스터디 글 답글 내용
+                properties:
+                  replies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 답글 식별자
+                        createAt:
+                          type: string
+                          description: 작성일
+                          example:
+                            - 1일 전
+                            - 12시간 전
+                            - 2000년 00월 00일
+                        isUpdated:
+                          type: boolean
+                          description: 수정 여부
+                        author:
+                          type: object
+                          description: 작성자
+                          properties:
+                            id:
+                              type: number
+                              description: 작성자 식별자
+                            name:
+                              type: string
+                              description: 작성자명
+                              example: 고대은
+                            isOwn:
+                              type: boolean
+                              description: 답글 소유자 여부
+                        content:
+                          type: string
+                          description: 답글 내용
+        '400':
+          description: 잘못된 답글 식별자
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 존재하지 않는 답글입니다
+        5xx:
+          description: 답글 작성 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+    post:
+      summary: 스터디 글 답글 작성
+      description: 스터디 글 답글 작성
+      tags:
+        - Reply
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+          description: 스터디 글 댓글 식별자
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: 답글 내용
+      responses:
+        '201':
+          description: 답글 작성 성공
+        '400':
+          description: 잘못된 답글 식별자
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+                    example: 존재하지 않는 댓글입니다
+        5xx:
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 오류 메세지
+  /api/v1/notices:
+    get:
+      summary: 알림 조회
+      description: 알림 조회
+      tags:
+        - Notice
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: Bearer 인증 토큰 (access-token)
+          required: true
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: 알림 타입
+                    enum:
+                      - 댓글, 답글
+                      - 스터디장 위임
+                      - 스터디 추방
+                  message:
+                    type: string
+                    description: 알림 내용
+                  location:
+                    type: string
+                    description: 이벤트 위치
+        '401':
+          description: 실패 - 로그인 필요
+        '403':
+          description: 실패 - 권한 없음
