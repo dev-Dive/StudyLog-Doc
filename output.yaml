@@ -2272,7 +2272,7 @@ paths:
                   message:
                     type: string
                     description: 오류 메세지
-  /api/v1/notices:
+  /api/v1/noticesss:
     get:
       summary: 알림 조회
       description: 알림 조회
