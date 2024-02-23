@@ -23,6 +23,7 @@ get:
       description: 청크 단위
   responses:
     '200':
+      description: 성공
       content:
         application/json:
           schema:
@@ -92,11 +93,11 @@ post:
       description: Bearer 인증 토큰 (access-token)
       required: true
     - in: path
-      name: studyId
+      name: id
       schema:
         type: number
-        description: 스터디 식별자
-        required: true
+      description: 스터디 식별자
+      required: true
   requestBody:
     content:
       multipart/form-data:

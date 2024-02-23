@@ -19,6 +19,10 @@ put:
               type: string
               format: binary
               description: 아바타 이미지
+  responses:
+    '200':
+      description: 성공
+
 delete:
   summary: 회원 아바타 이미지 삭제
   description: 회원 아바타 이미지 삭제

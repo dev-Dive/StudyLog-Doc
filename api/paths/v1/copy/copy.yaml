@@ -13,8 +13,8 @@ put:
       name: id
       schema:
         type: number
-        description: 스터디 글 복사본 식별자
-        required: true
+      description: 스터디 글 복사본 식별자
+      required: true
   requestBody:
     content:
       multipart/form-data:

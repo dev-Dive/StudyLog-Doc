@@ -7,8 +7,8 @@ get:
       name: id
       schema:
         type: number
-        description: 스터디 글 식별자
-        required: true
+      description: 스터디 글 식별자
+      required: true
   responses:
     '200':
       description: 스터디 글 조회 성공
