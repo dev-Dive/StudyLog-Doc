@@ -15,7 +15,7 @@ post:
         type: number
       description: 스터디 글 식별자
       required: true
-  response:
+  responses:
     '200':
       description: 성공
     '409':
