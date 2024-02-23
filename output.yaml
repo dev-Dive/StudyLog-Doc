@@ -191,8 +191,8 @@ paths:
           name: id
           schema:
             type: number
-            description: 스터디 글 식별자
-            required: true
+          description: 스터디 글 식별자
+          required: true
       responses:
         '200':
           description: 스터디 글 조회 성공
@@ -374,7 +374,7 @@ paths:
             type: number
           description: 스터디 글 식별자
           required: true
-      response:
+      responses:
         '200':
           description: 성공
         '409':
@@ -406,7 +406,7 @@ paths:
             type: number
           description: 스터디 글 식별자
           required: true
-      response:
+      responses:
         '200':
           description: 성공
         '409':
@@ -1033,6 +1033,9 @@ paths:
                   type: string
                   format: binary
                   description: 아바타 이미지
+      responses:
+        '200':
+          description: 성공
     delete:
       summary: 회원 아바타 이미지 삭제
       description: 회원 아바타 이미지 삭제
@@ -1365,6 +1368,7 @@ paths:
           description: 청크 단위
       responses:
         '200':
+          description: 성공
           content:
             application/json:
               schema:
@@ -1436,11 +1440,11 @@ paths:
           description: Bearer 인증 토큰 (access-token)
           required: true
         - in: path
-          name: studyId
+          name: id
           schema:
             type: number
-            description: 스터디 식별자
-            required: true
+          description: 스터디 식별자
+          required: true
       requestBody:
         content:
           multipart/form-data:
@@ -1996,8 +2000,8 @@ paths:
           name: id
           schema:
             type: number
-            description: 스터디 글 복사본 식별자
-            required: true
+          description: 스터디 글 복사본 식별자
+          required: true
       requestBody:
         content:
           multipart/form-data:
