@@ -2267,16 +2267,6 @@ paths:
                     type: string
                     description: 오류 메세지
                     example: 존재하지 않는 댓글입니다
-        5XX:
-          description: 실패
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: 오류 메세지
   /api/v1/notices:
     get:
       summary: 알림 조회
