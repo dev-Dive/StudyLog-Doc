@@ -1174,6 +1174,7 @@ paths:
           required: true
       responses:
         '200':
+          description: 성공
           content:
             application/json:
               schema:
