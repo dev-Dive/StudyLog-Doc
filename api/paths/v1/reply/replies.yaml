@@ -120,7 +120,7 @@ post:
                 type: string
                 description: 오류 메세지
                 example: 존재하지 않는 댓글입니다
-    '5xx':
+    '5XX':
       description: 실패
       content:
         application/json:
