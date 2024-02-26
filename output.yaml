@@ -2134,14 +2134,6 @@ paths:
                     example: 존재하지 않는 댓글입니다
         5xx:
           description: 댓글 작성 실패
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: 오류 메세지
   /api/v1/comments/{id}/replies:
     get:
       summary: 스터디 글 답글 조회
